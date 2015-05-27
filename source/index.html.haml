@@ -1,5 +1,13 @@
 ---
 title: Welcome to Middleman
 ---
+#tooltip
 .calendar
   #calendar
+  %script(id="calendar-popup" type="text/x-handlebars-template")
+    <div class='date'>
+    <h4><%= date%></h4>
+    </div>
+    <div class='count'>
+    <h5><%= dataCount %></h5>
+    </div>
