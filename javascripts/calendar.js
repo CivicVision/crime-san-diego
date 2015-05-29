@@ -1,7 +1,7 @@
 (function() {
   var calendarTooltip, calendarTooltipHtml, cellSize, color, day, format, height, monthPath, percent, prettyDate, rect, svg, week, width;
 
-  width = 960;
+  width = d3.select('#calendar').node().getBoundingClientRect()['width'];
 
   height = 136;
 

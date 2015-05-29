@@ -595,7 +595,59 @@ input[type="submit"] {
   #tooltip h5 {
     font-size: 1.8em; }
 
+/* line 3, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_barcharts.sass */
+.graph .axis text {
+  font: 10px sans-serif; }
+/* line 6, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_barcharts.sass */
+.graph .axis path,
+.graph .axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges; }
+/* line 12, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_barcharts.sass */
+.graph rect {
+  fill: #2DA89C; }
+/* line 14, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_barcharts.sass */
+.graph text {
+  font-size: 0.8em; }
+/* line 16, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_barcharts.sass */
+.graph .label {
+  font-size: 0.6em; }
+
+/* line 3, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_table.sass */
+.types-per-district table thead th:first-child {
+  width: 70px; }
+
 /* line 1, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/pages/_main.sass */
+.page {
+  max-width: 68em;
+  margin-left: auto;
+  margin-right: auto; }
+  /* line 15, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/bourbon/addons/_clearfix.scss */
+  .page:after {
+    content: "";
+    display: table;
+    clear: both; }
+  /* line 3, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/pages/_main.sass */
+  .page .content {
+    float: left;
+    display: block;
+    margin-right: 2.35765%;
+    width: 31.76157%; }
+    /* line 38, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/neat/grid/_span-columns.scss */
+    .page .content:last-child {
+      margin-right: 0; }
+  /* line 5, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/pages/_main.sass */
+  .page .graph {
+    float: left;
+    display: block;
+    margin-right: 2.35765%;
+    width: 65.88078%; }
+    /* line 38, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/neat/grid/_span-columns.scss */
+    .page .graph:last-child {
+      margin-right: 0; }
+
+/* line 7, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/pages/_main.sass */
 .calendar {
   max-width: 68em;
   margin-left: auto;
@@ -605,7 +657,7 @@ input[type="submit"] {
     content: "";
     display: table;
     clear: both; }
-  /* line 3, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/pages/_main.sass */
+  /* line 9, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/pages/_main.sass */
   .calendar #calendar {
     padding: 2em;
     float: left;
