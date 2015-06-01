@@ -1,4 +1,4 @@
-width = 960
+width = d3.select('#calendar').node().getBoundingClientRect()['width']
 height = 136
 cellSize = 17
 # cell size
