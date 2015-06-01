@@ -3,8 +3,10 @@ height = 20
 cellSize = 17
 hour = d3.time.format('%H')
 weekday = d3.time.format('%w')
+weekdayText = d3.time.format('%A')
+time = d3.time.format("%I %p")
 color = d3.scale.quantize().domain([ -.05, .05 ]).range(d3.range(9).map((d) -> 'q' + d + '-9'))
-sunday = new Date(2015,5,3)
+sunday = new Date(2015,4,3)
 start = moment(sunday).startOf('day')
 end = moment(sunday).endOf('day')
 timescale = d3.time.scale()
@@ -16,10 +18,13 @@ hoursAxis = d3.svg.axis()
 .scale(timescale)
 .orient('top')
 .ticks(d3.time.hour, 3)
-.tickFormat(d3.time.format("%I %p"))
+.tickFormat(time)
 
 dayOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
 dayOfWeekScale = d3.scale.ordinal().domain([0...6]).range(dayOfWeek)
+
+dayOfWeekTooltipHtml = d3.select("#day-of-week-popup").html()
+dayOfWeekTooltip = _.template(dayOfWeekTooltipHtml)
 
 d3.csv 'data/day_of_week_hour.csv', (data) ->
   max = d3.max(data, (d) -> d.count)
@@ -35,6 +40,17 @@ d3.csv 'data/day_of_week_hour.csv', (data) ->
   .attr('class', (d) ->
     entry = _.findWhere(data, { dow: weekday(d), hour: "#{parseInt(hour(d))}"})
     color(parseInt(entry.count))
+  ).on("mouseover", (d) ->
+    entry = _.findWhere(data, { dow: weekday(d), hour: "#{parseInt(hour(d))}"})
+    templateData  = { dayOfWeek: weekdayText(d), hour: time(d), dataCount: entry.count}
+    d3.select('#tooltip').html(dayOfWeekTooltip(templateData)).style("opacity", 1)
+    d3.select(this).classed("active", true)
+  ).on("mouseout", (d) ->
+    d3.select(this).classed("active", false)
+    d3.select('#tooltip').style("opacity", 0)
+  ).on("mousemove", (d) ->
+    d3.select("#tooltip").style("left", (d3.event.pageX + 14) + "px")
+    .style("top", (d3.event.pageY - 32) + "px")
   )
   hoursg = svg.append('g')
   .classed('axis', true)
