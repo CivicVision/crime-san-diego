@@ -15,6 +15,7 @@
   ],
   "dependencies": {
     "underscore":"",
-    "d3":""
+    "d3":"",
+    "moment":""
   }
 }
