@@ -595,6 +595,84 @@ input[type="submit"] {
   #tooltip h5 {
     font-size: 1.8em; }
 
+/* line 1, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_dayofweek.sass */
+.day-of-week {
+  max-width: 68em;
+  margin-left: auto;
+  margin-right: auto; }
+  /* line 15, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/bourbon/addons/_clearfix.scss */
+  .day-of-week:after {
+    content: "";
+    display: table;
+    clear: both; }
+
+/* line 3, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_dayofweek.sass */
+#day-of-week {
+  float: left;
+  display: block;
+  margin-right: 2.35765%;
+  width: 100%; }
+  /* line 38, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/neat/grid/_span-columns.scss */
+  #day-of-week:last-child {
+    margin-right: 0; }
+  /* line 5, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_dayofweek.sass */
+  #day-of-week g.axis {
+    display: none; }
+  /* line 8, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_dayofweek.sass */
+  #day-of-week svg:first-of-type {
+    height: 50px; }
+    /* line 10, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_dayofweek.sass */
+    #day-of-week svg:first-of-type g.YlOrRd {
+      transform: translate(70px, 35px); }
+    /* line 12, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_dayofweek.sass */
+    #day-of-week svg:first-of-type g.axis {
+      display: block; }
+  /* line 15, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_dayofweek.sass */
+  #day-of-week text {
+    font-size: 0.8em;
+    fill: #333;
+    font-size: 0.7rem; }
+  /* line 19, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_dayofweek.sass */
+  #day-of-week .axis {
+    fill: none; }
+    /* line 21, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_dayofweek.sass */
+    #day-of-week .axis path, #day-of-week .axis line {
+      shape-rendering: crispEdges;
+      stroke: #eee;
+      stroke-width: 1; }
+    /* line 25, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_dayofweek.sass */
+    #day-of-week .axis text {
+      font-size: 0.8em;
+      fill: #ccc;
+      font-size: 0.7rem; }
+  /* line 30, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_dayofweek.sass */
+  #day-of-week .YlOrRd .q0-9 {
+    fill: #ffffcc; }
+  /* line 32, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_dayofweek.sass */
+  #day-of-week .YlOrRd .q1-9 {
+    fill: #ffeda0; }
+  /* line 34, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_dayofweek.sass */
+  #day-of-week .YlOrRd .q2-9 {
+    fill: #fed976; }
+  /* line 36, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_dayofweek.sass */
+  #day-of-week .YlOrRd .q3-9 {
+    fill: #feb24c; }
+  /* line 38, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_dayofweek.sass */
+  #day-of-week .YlOrRd .q4-9 {
+    fill: #fd8d3c; }
+  /* line 40, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_dayofweek.sass */
+  #day-of-week .YlOrRd .q5-9 {
+    fill: #fc4e2a; }
+  /* line 42, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_dayofweek.sass */
+  #day-of-week .YlOrRd .q6-9 {
+    fill: #e31a1c; }
+  /* line 44, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_dayofweek.sass */
+  #day-of-week .YlOrRd .q7-9 {
+    fill: #bd0026; }
+  /* line 46, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_dayofweek.sass */
+  #day-of-week .YlOrRd .q8-9 {
+    fill: #800026; }
+
 /* line 3, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_barcharts.sass */
 .graph .axis text {
   font: 10px sans-serif; }

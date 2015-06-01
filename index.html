@@ -48,6 +48,17 @@
           <div class='types-per-district'></div>
         </div>
       </div>
+      <div class='day-of-week'>
+        <div id='day-of-week'></div>
+        <script id='day-of-week-popup' type='text/x-handlebars-template'>
+          <div class='date'>
+          <h4><%= dayOfWeek %>, <%= hour %></h4>
+          </div>
+          <div class='count'>
+          <h5><%= dataCount %></h5>
+          </div>
+        </script>
+      </div>
       <div class='calendar'>
         <div id='calendar'></div>
         <script id='calendar-popup' type='text/x-handlebars-template'>
