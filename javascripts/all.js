@@ -11050,6 +11050,86 @@
   if (typeof define === "function" && define.amd) define(d3); else if (typeof module === "object" && module.exports) module.exports = d3;
   this.d3 = d3;
 }();
+(function() {
+  var slice = [].slice;
+
+  function queue(parallelism) {
+    var q,
+        tasks = [],
+        started = 0, // number of tasks that have been started (and perhaps finished)
+        active = 0, // number of tasks currently being executed (started but not finished)
+        remaining = 0, // number of tasks not yet finished
+        popping, // inside a synchronous task callback?
+        error = null,
+        await = noop,
+        all;
+
+    if (!parallelism) parallelism = Infinity;
+
+    function pop() {
+      while (popping = started < tasks.length && active < parallelism) {
+        var i = started++,
+            t = tasks[i],
+            a = slice.call(t, 1);
+        a.push(callback(i));
+        ++active;
+        t[0].apply(null, a);
+      }
+    }
+
+    function callback(i) {
+      return function(e, r) {
+        --active;
+        if (error != null) return;
+        if (e != null) {
+          error = e; // ignore new tasks and squelch active callbacks
+          started = remaining = NaN; // stop queued tasks from starting
+          notify();
+        } else {
+          tasks[i] = r;
+          if (--remaining) popping || pop();
+          else notify();
+        }
+      };
+    }
+
+    function notify() {
+      if (error != null) await(error);
+      else if (all) await(error, tasks);
+      else await.apply(null, [error].concat(tasks));
+    }
+
+    return q = {
+      defer: function() {
+        if (!error) {
+          tasks.push(arguments);
+          ++remaining;
+          pop();
+        }
+        return q;
+      },
+      await: function(f) {
+        await = f;
+        all = false;
+        if (!remaining) notify();
+        return q;
+      },
+      awaitAll: function(f) {
+        await = f;
+        all = true;
+        if (!remaining) notify();
+        return q;
+      }
+    };
+  }
+
+  function noop() {}
+
+  queue.version = "1.0.7";
+  if (typeof define === "function" && define.amd) define(function() { return queue; });
+  else if (typeof module === "object" && module.exports) module.exports = queue;
+  else this.queue = queue;
+})();
 //! moment.js
 //! version : 2.10.3
 //! authors : Tim Wood, Iskren Chernev, Moment.js contributors
@@ -14361,252 +14441,368 @@
 (function() {
   var calendarTooltip, calendarTooltipHtml, cellSize, color, day, format, height, monthPath, percent, prettyDate, rect, svg, week, width;
 
-  width = d3.select('#calendar').node().getBoundingClientRect()['width'];
-
-  height = 136;
-
-  cellSize = 17;
-
-  day = d3.time.format('%w');
-
-  week = d3.time.format('%U');
-
-  percent = d3.format('.1%');
-
-  format = d3.time.format('%Y-%m-%d');
-
-  prettyDate = d3.time.format('%a, %b %e, %Y');
-
-  color = d3.scale.quantize().domain([-.05, .05]).range(d3.range(9).map(function(d) {
-    return 'q' + d + '-9';
-  }));
-
-  calendarTooltipHtml = d3.select("#calendar-popup").html();
-
-  calendarTooltip = _.template(calendarTooltipHtml);
-
-  svg = d3.select('#calendar').selectAll('svg').data(d3.range(2008, 2014)).enter().append('svg').attr('width', width).attr('height', height + 20).attr('class', 'YlOrRd').append('g').attr('transform', "translate(" + ((width - (cellSize * 53)) / 2) + "," + (height - (cellSize * 7) - 1) + ")");
-
-  monthPath = function(t0) {
-    var d0, d1, t1, w0, w1;
-    t1 = new Date(t0.getFullYear(), t0.getMonth() + 1, 0);
-    d0 = +day(t0);
-    w0 = +week(t0);
-    d1 = +day(t1);
-    w1 = +week(t1);
-    return 'M' + (w0 + 1) * cellSize + ',' + d0 * cellSize + 'H' + w0 * cellSize + 'V' + 7 * cellSize + 'H' + w1 * cellSize + 'V' + (d1 + 1) * cellSize + 'H' + (w1 + 1) * cellSize + 'V' + 0 + 'H' + (w0 + 1) * cellSize + 'Z';
-  };
-
-  svg.append('text').attr('class', 'info').attr('transform', "translate(" + (cellSize * 26) + "," + (cellSize * 8) + ")").style('text-anchor', 'middle');
-
-  svg.append('text').attr('transform', 'translate(-6,' + cellSize * 3.5 + ')rotate(-90)').style('text-anchor', 'middle').text(function(d) {
-    return d;
-  });
-
-  rect = svg.selectAll('.day').data(function(d) {
-    return d3.time.days(new Date(d, 0, 1), new Date(d + 1, 0, 1));
-  }).enter().append('rect').attr('class', 'day').attr('width', cellSize).attr('height', cellSize).attr('x', function(d) {
-    return week(d) * cellSize;
-  }).attr('y', function(d) {
-    return day(d) * cellSize;
-  }).datum(format);
-
-  svg.selectAll('.month').data(function(d) {
-    return d3.time.months(new Date(d, 0, 1), new Date(d + 1, 0, 1));
-  }).enter().append('path').attr('class', 'month').attr('d', monthPath);
-
-  d3.csv('data/day_count.csv', function(error, csv) {
-    var data;
-    data = d3.nest().key(function(d) {
-      return d.date;
-    }).rollup(function(d) {
-      return d[0].count;
-    }).map(csv);
-    color.domain(d3.extent(csv, function(d) {
-      return d.count;
+  if (!d3.select('#calendar').empty()) {
+    width = d3.select('#calendar').node().getBoundingClientRect()['width'];
+    height = 136;
+    cellSize = 17;
+    day = d3.time.format('%w');
+    week = d3.time.format('%U');
+    percent = d3.format('.1%');
+    format = d3.time.format('%Y-%m-%d');
+    prettyDate = d3.time.format('%a, %b %e, %Y');
+    color = d3.scale.quantize().domain([-.05, .05]).range(d3.range(9).map(function(d) {
+      return 'q' + d + '-9';
     }));
-    rect.filter(function(d) {
-      return d in data;
-    }).attr('class', function(d) {
-      return 'day ' + color(data[d]);
-    }).on("mouseover", function(d) {
-      var count, templateData;
-      count = data[d];
-      templateData = {
-        dataType: "all",
-        date: prettyDate(format.parse(d)),
-        dataCount: count
-      };
-      d3.select('#tooltip').html(calendarTooltip(templateData)).style("opacity", 1);
-      return d3.select(this).classed("active", true);
-    }).on("mouseout", function(d) {
-      d3.select(this).classed("active", false);
-      return d3.select('#tooltip').style("opacity", 0);
-    }).on("mousemove", function(d) {
-      return d3.select("#tooltip").style("left", (d3.event.pageX + 14) + "px").style("top", (d3.event.pageY - 32) + "px");
+    calendarTooltipHtml = d3.select("#calendar-popup").html();
+    calendarTooltip = _.template(calendarTooltipHtml);
+    svg = d3.select('#calendar').selectAll('svg').data(d3.range(2008, 2014)).enter().append('svg').attr('width', width).attr('height', height + 20).attr('class', 'YlOrRd').append('g').attr('transform', "translate(" + ((width - (cellSize * 53)) / 2) + "," + (height - (cellSize * 7) - 1) + ")");
+    monthPath = function(t0) {
+      var d0, d1, t1, w0, w1;
+      t1 = new Date(t0.getFullYear(), t0.getMonth() + 1, 0);
+      d0 = +day(t0);
+      w0 = +week(t0);
+      d1 = +day(t1);
+      w1 = +week(t1);
+      return 'M' + (w0 + 1) * cellSize + ',' + d0 * cellSize + 'H' + w0 * cellSize + 'V' + 7 * cellSize + 'H' + w1 * cellSize + 'V' + (d1 + 1) * cellSize + 'H' + (w1 + 1) * cellSize + 'V' + 0 + 'H' + (w0 + 1) * cellSize + 'Z';
+    };
+    svg.append('text').attr('class', 'info').attr('transform', "translate(" + (cellSize * 26) + "," + (cellSize * 8) + ")").style('text-anchor', 'middle');
+    svg.append('text').attr('transform', 'translate(-6,' + cellSize * 3.5 + ')rotate(-90)').style('text-anchor', 'middle').text(function(d) {
+      return d;
     });
-  });
+    rect = svg.selectAll('.day').data(function(d) {
+      return d3.time.days(new Date(d, 0, 1), new Date(d + 1, 0, 1));
+    }).enter().append('rect').attr('class', 'day').attr('width', cellSize).attr('height', cellSize).attr('x', function(d) {
+      return week(d) * cellSize;
+    }).attr('y', function(d) {
+      return day(d) * cellSize;
+    }).datum(format);
+    svg.selectAll('.month').data(function(d) {
+      return d3.time.months(new Date(d, 0, 1), new Date(d + 1, 0, 1));
+    }).enter().append('path').attr('class', 'month').attr('d', monthPath);
+    d3.csv('data/day_count.csv', function(error, csv) {
+      var data;
+      data = d3.nest().key(function(d) {
+        return d.date;
+      }).rollup(function(d) {
+        return d[0].count;
+      }).map(csv);
+      color.domain(d3.extent(csv, function(d) {
+        return d.count;
+      }));
+      rect.filter(function(d) {
+        return d in data;
+      }).attr('class', function(d) {
+        return 'day ' + color(data[d]);
+      }).on("mouseover", function(d) {
+        var count, templateData;
+        count = data[d];
+        templateData = {
+          dataType: "all",
+          date: prettyDate(format.parse(d)),
+          dataCount: count
+        };
+        d3.select('#tooltip').html(calendarTooltip(templateData)).style("opacity", 1);
+        return d3.select(this).classed("active", true);
+      }).on("mouseout", function(d) {
+        d3.select(this).classed("active", false);
+        return d3.select('#tooltip').style("opacity", 0);
+      }).on("mousemove", function(d) {
+        return d3.select("#tooltip").style("left", (d3.event.pageX + 14) + "px").style("top", (d3.event.pageY - 32) + "px");
+      });
+    });
+  }
 
 }).call(this);
 (function() {
-  var cellSize, color, dayOfWeek, dayOfWeekScale, dayOfWeekTooltip, dayOfWeekTooltipHtml, end, height, hour, hoursAxis, start, sunday, time, timescale, weekday, weekdayText, width;
+  var dayOfWeekNbhdData, dayOfWeekNbhdData2012, neighborhoodData, updateData;
 
-  width = 960;
+  this.dayofWeekChart = function() {
+    var cellSize, chart, color, dayOfWeekScale, dayOfWeekTooltip, dayOfWeekTooltipHtml, defaultEmpty, end, height, hour, paddingDays, start, startDate, time, timescale, weekDayPadding, weekDays, weekday, weekdayText, width, xTicks;
+    width = 700;
+    height = 20;
+    cellSize = 17;
+    xTicks = 3;
+    defaultEmpty = 0;
+    paddingDays = 5;
+    weekDayPadding = 70;
+    weekDays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    hour = d3.time.format('%H');
+    weekday = d3.time.format('%w');
+    weekdayText = d3.time.format('%A');
+    time = d3.time.format("%I %p");
+    dayOfWeekTooltipHtml = d3.select("#day-of-week-popup").html();
+    dayOfWeekTooltip = _.template(dayOfWeekTooltipHtml);
+    dayOfWeekScale = d3.scale.ordinal().domain([0, 1, 2, 3, 4, 5]).range(weekDays);
+    startDate = new Date(2015, 4, 3);
+    color = d3.scale.quantize().domain([-.05, .05]).range(d3.range(9).map(function(d) {
+      return 'q' + d + '-9';
+    }));
+    start = moment(startDate).startOf('day');
+    end = moment(startDate).endOf('day');
+    timescale = d3.time.scale().nice(d3.time.day).domain([start.toDate(), end.toDate()]).range([0, cellSize * 24]);
+    chart = function(selection) {
+      return selection.each((function(_this) {
+        return function(data, i) {
+          var g, gEnter, hoursAxis, hoursg, rect, svg;
+          start = moment(startDate).startOf('day');
+          end = moment(startDate).endOf('day');
+          timescale.domain([start.toDate(), end.toDate()]).range([0, cellSize * 24]);
+          svg = _this.selectAll('svg').data(d3.range(0, 7));
+          gEnter = svg.enter().append('svg').append('g');
+          svg.attr('width', width).attr('height', height);
+          g = svg.select("g").attr('transform', "translate(" + weekDayPadding + ", " + paddingDays + ")").attr('class', 'YlOrRd');
+          g.append('text').attr('class', 'day-of-week').attr('transform', "translate(-" + weekDayPadding + ", " + (paddingDays * 2) + ")").text(function(d) {
+            return weekDays[d];
+          });
+          rect = g.selectAll('.hour').data(function(d) {
+            return d3.time.hours(moment(startDate).add(d, 'days').startOf('day').toDate(), moment(startDate).add(d, 'days').endOf('day').toDate());
+          });
+          rect.enter().append('rect').attr('width', cellSize).attr('height', cellSize).attr('x', function(d) {
+            return hour(d) * cellSize;
+          }).attr('y', 0).on("mouseout", function(d) {
+            d3.select(this).classed("active", false);
+            return d3.select('#tooltip').style("opacity", 0);
+          }).on("mousemove", function(d) {
+            return d3.select("#tooltip").style("left", (d3.event.pageX + 14) + "px").style("top", (d3.event.pageY - 32) + "px");
+          });
+          rect.attr('class', function(d) {
+            var count, entry;
+            entry = _.findWhere(data, {
+              dow: weekday(d),
+              hour: "" + (parseInt(hour(d)))
+            });
+            if (entry) {
+              count = entry.count;
+            } else {
+              count = defaultEmpty;
+            }
+            return "hour " + (color(parseInt(count)));
+          }).on("mouseover", function(d) {
+            var count, entry, templateData;
+            entry = _.findWhere(data, {
+              dow: weekday(d),
+              hour: "" + (parseInt(hour(d)))
+            });
+            if (entry) {
+              count = entry.count;
+            } else {
+              count = defaultEmpty;
+            }
+            templateData = {
+              dayOfWeek: weekdayText(d),
+              hour: time(d),
+              dataCount: count
+            };
+            d3.select('#tooltip').html(dayOfWeekTooltip(templateData)).style("opacity", 1);
+            return d3.select(this).classed("active", true);
+          });
+          hoursAxis = d3.svg.axis().scale(timescale).orient('top').ticks(d3.time.hour, xTicks).tickFormat(time);
+          return hoursg = g.append('g').classed('axis', true).classed('hours', true).classed('labeled', true).attr("transform", "translate(0,-10.5)").call(hoursAxis);
+        };
+      })(this));
+    };
+    chart.cellSize = function(value) {
+      if (!arguments.length) {
+        return cellSize;
+      }
+      cellSize = value;
+      return chart;
+    };
+    chart.height = function(value) {
+      if (!arguments.length) {
+        return height;
+      }
+      height = value;
+      return chart;
+    };
+    chart.width = function(value) {
+      if (!arguments.length) {
+        return width;
+      }
+      width = value;
+      return chart;
+    };
+    chart.color = function(value) {
+      if (!arguments.length) {
+        return color;
+      }
+      color = value;
+      return chart;
+    };
+    chart.weekDays = function(value) {
+      if (!arguments.length) {
+        return weekDays;
+      }
+      weekDays = value;
+      return chart;
+    };
+    chart.xTicks = function(value) {
+      if (!arguments.length) {
+        return xTicks;
+      }
+      xTicks = value;
+      return chart;
+    };
+    chart.weekDayPadding = function(value) {
+      if (!arguments.length) {
+        return weekDayPadding;
+      }
+      weekDayPadding = value;
+      return chart;
+    };
+    return chart;
+  };
 
-  height = 20;
-
-  cellSize = 17;
-
-  hour = d3.time.format('%H');
-
-  weekday = d3.time.format('%w');
-
-  weekdayText = d3.time.format('%A');
-
-  time = d3.time.format("%I %p");
-
-  color = d3.scale.quantize().domain([-.05, .05]).range(d3.range(9).map(function(d) {
-    return 'q' + d + '-9';
-  }));
-
-  sunday = new Date(2015, 4, 3);
-
-  start = moment(sunday).startOf('day');
-
-  end = moment(sunday).endOf('day');
-
-  timescale = d3.time.scale().nice(d3.time.day).domain([start.toDate(), end.toDate()]).range([0, cellSize * 24]);
-
-  hoursAxis = d3.svg.axis().scale(timescale).orient('top').ticks(d3.time.hour, 3).tickFormat(time);
-
-  dayOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-
-  dayOfWeekScale = d3.scale.ordinal().domain([0, 1, 2, 3, 4, 5]).range(dayOfWeek);
-
-  dayOfWeekTooltipHtml = d3.select("#day-of-week-popup").html();
-
-  dayOfWeekTooltip = _.template(dayOfWeekTooltipHtml);
-
-  d3.csv('data/day_of_week_hour.csv', function(data) {
-    var hoursg, max, rect, svg;
+  updateData = function(neighborhoods, data) {
+    var max;
+    d3.select("body").classed("modal-open", true);
+    d3.select('.modal').select('h1').text('Loading Data');
     max = d3.max(data, function(d) {
       return d.count;
     });
-    color.domain([0, max]);
-    svg = d3.select('#day-of-week').selectAll('svg').data(d3.range(0, 7)).enter().append('svg').attr('width', width).attr('height', height).append('g').attr('transform', "translate(70,5)").attr('class', 'YlOrRd');
-    svg.append('text').attr('class', 'day-of-week').attr('transform', 'translate(-70,10)').text(function(d) {
-      return dayOfWeek[d];
-    });
-    rect = svg.selectAll('.hour').data(function(d) {
-      return d3.time.hours(moment(sunday).add(d, 'days').startOf('day').toDate(), moment(sunday).add(d, 'days').endOf('day').toDate());
-    }).enter().append('rect').attr('class', 'hour').attr('width', cellSize).attr('height', cellSize).attr('x', function(d) {
-      return hour(d) * cellSize;
-    }).attr('y', 0).attr('class', function(d) {
-      var entry;
-      entry = _.findWhere(data, {
-        dow: weekday(d),
-        hour: "" + (parseInt(hour(d)))
+    _.each(neighborhoods, function(neighborhood) {
+      var chart, color, days, nData, width;
+      nData = _.where(data, {
+        nbrhood: neighborhood.code
       });
-      return color(parseInt(entry.count));
-    }).on("mouseover", function(d) {
-      var entry, templateData;
-      entry = _.findWhere(data, {
-        dow: weekday(d),
-        hour: "" + (parseInt(hour(d)))
-      });
-      templateData = {
-        dayOfWeek: weekdayText(d),
-        hour: time(d),
-        dataCount: entry.count
-      };
-      d3.select('#tooltip').html(dayOfWeekTooltip(templateData)).style("opacity", 1);
-      return d3.select(this).classed("active", true);
-    }).on("mouseout", function(d) {
-      d3.select(this).classed("active", false);
-      return d3.select('#tooltip').style("opacity", 0);
-    }).on("mousemove", function(d) {
-      return d3.select("#tooltip").style("left", (d3.event.pageX + 14) + "px").style("top", (d3.event.pageY - 32) + "px");
+      if (nData) {
+        color = d3.scale.quantize().domain([0, max]).range(d3.range(9).map(function(d) {
+          return 'q' + d + '-9';
+        }));
+        width = d3.select("." + neighborhood.code).node().getBoundingClientRect()['width'];
+        days = ["Su", "Mo", "Tu", "Wed", "Thu", "Fr", "Sa"];
+        chart = dayofWeekChart().color(color).width(265).height(15).cellSize(10).xTicks(5).weekDays(days).weekDayPadding(25);
+        return d3.select("." + neighborhood.code).datum(nData).call(chart);
+      }
     });
-    return hoursg = svg.append('g').classed('axis', true).classed('hours', true).classed('labeled', true).attr("transform", "translate(0,-10.5)").call(hoursAxis);
-  });
+    return d3.select("body").classed("modal-open", false);
+  };
+
+  if (!d3.select('#day-of-week').empty()) {
+    d3.csv('data/day_of_week_hour.csv', function(data) {
+      var chart, color, max, width;
+      max = d3.max(data, function(d) {
+        return d.count;
+      });
+      color = d3.scale.quantize().domain([0, max]).range(d3.range(9).map(function(d) {
+        return 'q' + d + '-9';
+      }));
+      width = d3.select('#day-of-week').node().getBoundingClientRect()['width'];
+      chart = dayofWeekChart().color(color).width(width).cellSize(20);
+      return d3.select('#day-of-week').datum(data).call(chart);
+    });
+  }
+
+  if (!d3.select('#day-of-week-nbhd').empty()) {
+    neighborhoodData = 'data/Neighborhoods.csv';
+    dayOfWeekNbhdData2012 = 'data/day_of_week_hour_nbhd_2012.csv';
+    dayOfWeekNbhdData = 'data/day_of_week_hour_nbhd.csv';
+    queue().defer(d3.csv, neighborhoodData).defer(d3.csv, dayOfWeekNbhdData).defer(d3.csv, dayOfWeekNbhdData2012).await(function(error, neighborhoods, allTimeData, data) {
+      var nbh;
+      nbh = d3.select('#day-of-week-nbhd').selectAll('.nbh').data(neighborhoods);
+      nbh.enter().append('div').attr('class', function(d) {
+        return "nbh " + d.code;
+      }).append('h4').text(function(d) {
+        return d.name;
+      });
+      _.defer(updateData, neighborhoods, data);
+      return d3.selectAll('.year-change').on('click', function(d, i) {
+        var element, year;
+        element = d3.select(this);
+        if (!element.classed('active')) {
+          d3.select("body").classed("modal-open", true);
+          d3.selectAll('.year-change').classed('active', false);
+          element.classed('active', true);
+          year = element.attr('data-year');
+          if (year === 'allTime') {
+            return _.defer(updateData, neighborhoods, allTimeData);
+          } else {
+            return _.defer(updateData, neighborhoods, data);
+          }
+        }
+      });
+    });
+  }
 
 }).call(this);
 (function() {
   var districtMapping;
 
-  districtMapping = {
-    'San001': '1',
-    'San002': '2',
-    'San003': '3',
-    'San004': '4',
-    'San005': '5',
-    'San006': '6',
-    'San007': '7',
-    'San008': '8',
-    'San009': '9'
-  };
-
-  d3.csv('data/per_year_council.csv', function(data) {
-    var data_2012, width, yearCount;
-    data_2012 = _.where(data, {
-      year: "2012"
+  if (!d3.select('.per-district').empty()) {
+    districtMapping = {
+      'San001': '1',
+      'San002': '2',
+      'San003': '3',
+      'San004': '4',
+      'San005': '5',
+      'San006': '6',
+      'San007': '7',
+      'San008': '8',
+      'San009': '9'
+    };
+    d3.csv('data/per_year_council.csv', function(data) {
+      var data_2012, width, yearCount;
+      data_2012 = _.where(data, {
+        year: "2012"
+      });
+      _.each(data_2012, function(d) {
+        d.per_houndredthousand = parseInt(d.per_houndredthousand);
+        return d.council = districtMapping[d.council];
+      });
+      width = d3.select('.per-district').node().getBoundingClientRect()['width'];
+      yearCount = new Barchart(data_2012, {
+        width: width - 30
+      });
+      yearCount.setValueKey('per_houndredthousand');
+      yearCount.setGroupKey('council');
+      yearCount.setXDomain(_.unique(_.map(data_2012, function(d) {
+        return d.council;
+      })));
+      yearCount.setYDomain([
+        0, d3.max(data_2012, function(d) {
+          return parseInt(d.per_houndredthousand);
+        })
+      ]);
+      return yearCount.render('.per-district');
     });
-    _.each(data_2012, function(d) {
-      d.per_houndredthousand = parseInt(d.per_houndredthousand);
-      return d.council = districtMapping[d.council];
-    });
-    width = d3.select('.per-district').node().getBoundingClientRect()['width'];
-    yearCount = new Barchart(data_2012, {
-      width: width - 30
-    });
-    yearCount.setValueKey('per_houndredthousand');
-    yearCount.setGroupKey('council');
-    yearCount.setXDomain(_.unique(_.map(data_2012, function(d) {
-      return d.council;
-    })));
-    yearCount.setYDomain([
-      0, d3.max(data_2012, function(d) {
-        return parseInt(d.per_houndredthousand);
-      })
-    ]);
-    return yearCount.render('.per-district');
-  });
+  }
 
 }).call(this);
 (function() {
   var districtMapping;
 
-  districtMapping = {
-    'San001': '1',
-    'San002': '2',
-    'San003': '3',
-    'San004': '4',
-    'San005': '5',
-    'San006': '6',
-    'San007': '7',
-    'San008': '8',
-    'San009': '9'
-  };
-
-  d3.csv('data/most_crimes_per_district.csv', function(data) {
-    var body, entries, header, table;
-    table = d3.select('.types-per-district').append('table');
-    header = table.append('thead').append('tr');
-    header.selectAll('th').data(['District', 'crime type', 'no. of crimes']).enter().append('th').text(function(d) {
-      return d;
+  if (!d3.select('.types-per-district').empty()) {
+    districtMapping = {
+      'San001': '1',
+      'San002': '2',
+      'San003': '3',
+      'San004': '4',
+      'San005': '5',
+      'San006': '6',
+      'San007': '7',
+      'San008': '8',
+      'San009': '9'
+    };
+    d3.csv('data/most_crimes_per_district.csv', function(data) {
+      var body, entries, header, table;
+      table = d3.select('.types-per-district').append('table');
+      header = table.append('thead').append('tr');
+      header.selectAll('th').data(['District', 'crime type', 'no. of crimes']).enter().append('th').text(function(d) {
+        return d;
+      });
+      body = table.append('tbody');
+      entries = body.selectAll('tr').data(data).enter().append('tr');
+      entries.append('td').text(function(d) {
+        return districtMapping[d.council];
+      });
+      entries.append('td').text(function(d) {
+        return d.type;
+      });
+      return entries.append('td').text(function(d) {
+        return d.count;
+      });
     });
-    body = table.append('tbody');
-    entries = body.selectAll('tr').data(data).enter().append('tr');
-    entries.append('td').text(function(d) {
-      return districtMapping[d.council];
-    });
-    entries.append('td').text(function(d) {
-      return d.type;
-    });
-    return entries.append('td').text(function(d) {
-      return d.count;
-    });
-  });
+  }
 
 }).call(this);
 (function() {
@@ -14902,25 +15098,35 @@
 
 }).call(this);
 (function() {
-  d3.csv('data/year_count.csv', function(data) {
-    var width, yearCount;
-    width = d3.select('.overall-per-year').node().getBoundingClientRect()['width'];
-    data = _.reject(data, function(d) {
-      return d.year === '2013';
+  if (!d3.select('.modal').empty()) {
+    d3.select('.modal-close').on('click', function(d) {
+      return d3.select("body").classed("modal-open", false);
     });
-    yearCount = new Barchart(data, {
-      width: width - 30
+  }
+
+}).call(this);
+(function() {
+  if (!d3.select('.overall-per-year').empty()) {
+    d3.csv('data/year_count.csv', function(data) {
+      var width, yearCount;
+      width = d3.select('.overall-per-year').node().getBoundingClientRect()['width'];
+      data = _.reject(data, function(d) {
+        return d.year === '2013';
+      });
+      yearCount = new Barchart(data, {
+        width: width - 30
+      });
+      yearCount.setValueKey('count');
+      yearCount.setGroupKey('year');
+      yearCount.setXDomain([2007, 2008, 2009, 2010, 2011, 2012]);
+      yearCount.setYDomain([
+        0, d3.max(data, function(d) {
+          return parseInt(d.count);
+        })
+      ]);
+      return yearCount.render('.overall-per-year');
     });
-    yearCount.setValueKey('count');
-    yearCount.setGroupKey('year');
-    yearCount.setXDomain([2007, 2008, 2009, 2010, 2011, 2012]);
-    yearCount.setYDomain([
-      0, d3.max(data, function(d) {
-        return parseInt(d.count);
-      })
-    ]);
-    return yearCount.render('.overall-per-year');
-  });
+  }
 
 }).call(this);
 (function() {

@@ -19,51 +19,39 @@
       </div>
     </header>
     <div class='page'>
-      <div id='overall'>
-        <h1>Crime Statistics</h1>
-        <div class='content'>
-          <p>Crime is declining in San Diego. The overall committed crimes is at it's lowest in 2012 at 143,182 crimes.</p>
-        </div>
-        <div class='graph'>
-          <div class='overall-per-year'></div>
-        </div>
-      </div>
-      <div id='districts'>
-        <h2>Districts</h2>
-        <div class='content'>
-          <p>The two districts with the most crimes are District 2 and District 3.</p>
-        </div>
-        <div class='graph'>
-          <h4>2012 Council District crimes (per 100.000 residents)</h4>
-          <div class='per-district'></div>
-        </div>
-      </div>
-      <div id='district_types'>
-        <h2>Types per District</h2>
-        <div class='content'>
-          <p></p>
-        </div>
-        <div class='graph'>
-          <h4>Crime types per Council District (2007-2012)</h4>
-          <div class='types-per-district'></div>
-        </div>
-      </div>
       <div class='day-of-week'>
-        <div id='day-of-week'></div>
+        <h2>Crimes by Day of Week and by Hour of Day</h2>
+        <h3>Throughout San Diego and from 2009-2012</h3>
+        <div class='d-o-w' id='day-of-week'></div>
+        <div class='d-o-w-nbh'>
+          <h3>Crimes by Neighborhood</h3>
+          <ul class='year-switch'>
+            <li>
+              <button class='active year-change' data-year='2012'>2012</button>
+            </li>
+            <li>
+              <button class='year-change' data-year='allTime'>All-time</button>
+            </li>
+          </ul>
+          <div class='explanation'>
+            <p>Select which timeframe you want to see. Hover over a specific dataset to see the acutal number.</p>
+            <p>All Visualizations use the same scale. Days/Hours with more crimes appear darker (red) and with less/no crime lighter (yellow).</p>
+          </div>
+          <div class='d-o-w' id='day-of-week-nbhd'></div>
+        </div>
+        <div class='modal'>
+          <div class='modal-fade-screen'>
+            <div class='modal-inner'>
+              <div class='modal-close' for='modal-1'></div>
+              <h1></h1>
+              <p class='modal-intro'></p>
+              <p class='modal-content'></p>
+            </div>
+          </div>
+        </div>
         <script id='day-of-week-popup' type='text/x-handlebars-template'>
           <div class='date'>
           <h4><%= dayOfWeek %>, <%= hour %></h4>
-          </div>
-          <div class='count'>
-          <h5><%= dataCount %></h5>
-          </div>
-        </script>
-      </div>
-      <div class='calendar'>
-        <div id='calendar'></div>
-        <script id='calendar-popup' type='text/x-handlebars-template'>
-          <div class='date'>
-          <h4><%= date%></h4>
           </div>
           <div class='count'>
           <h5><%= dataCount %></h5>

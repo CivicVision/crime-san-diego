@@ -1,83 +1,212 @@
 (function() {
-  var cellSize, color, dayOfWeek, dayOfWeekScale, dayOfWeekTooltip, dayOfWeekTooltipHtml, end, height, hour, hoursAxis, start, sunday, time, timescale, weekday, weekdayText, width;
+  var dayOfWeekNbhdData, dayOfWeekNbhdData2012, neighborhoodData, updateData;
 
-  width = 960;
+  this.dayofWeekChart = function() {
+    var cellSize, chart, color, dayOfWeekScale, dayOfWeekTooltip, dayOfWeekTooltipHtml, defaultEmpty, end, height, hour, paddingDays, start, startDate, time, timescale, weekDayPadding, weekDays, weekday, weekdayText, width, xTicks;
+    width = 700;
+    height = 20;
+    cellSize = 17;
+    xTicks = 3;
+    defaultEmpty = 0;
+    paddingDays = 5;
+    weekDayPadding = 70;
+    weekDays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    hour = d3.time.format('%H');
+    weekday = d3.time.format('%w');
+    weekdayText = d3.time.format('%A');
+    time = d3.time.format("%I %p");
+    dayOfWeekTooltipHtml = d3.select("#day-of-week-popup").html();
+    dayOfWeekTooltip = _.template(dayOfWeekTooltipHtml);
+    dayOfWeekScale = d3.scale.ordinal().domain([0, 1, 2, 3, 4, 5]).range(weekDays);
+    startDate = new Date(2015, 4, 3);
+    color = d3.scale.quantize().domain([-.05, .05]).range(d3.range(9).map(function(d) {
+      return 'q' + d + '-9';
+    }));
+    start = moment(startDate).startOf('day');
+    end = moment(startDate).endOf('day');
+    timescale = d3.time.scale().nice(d3.time.day).domain([start.toDate(), end.toDate()]).range([0, cellSize * 24]);
+    chart = function(selection) {
+      return selection.each((function(_this) {
+        return function(data, i) {
+          var g, gEnter, hoursAxis, hoursg, rect, svg;
+          start = moment(startDate).startOf('day');
+          end = moment(startDate).endOf('day');
+          timescale.domain([start.toDate(), end.toDate()]).range([0, cellSize * 24]);
+          svg = _this.selectAll('svg').data(d3.range(0, 7));
+          gEnter = svg.enter().append('svg').append('g');
+          svg.attr('width', width).attr('height', height);
+          g = svg.select("g").attr('transform', "translate(" + weekDayPadding + ", " + paddingDays + ")").attr('class', 'YlOrRd');
+          g.append('text').attr('class', 'day-of-week').attr('transform', "translate(-" + weekDayPadding + ", " + (paddingDays * 2) + ")").text(function(d) {
+            return weekDays[d];
+          });
+          rect = g.selectAll('.hour').data(function(d) {
+            return d3.time.hours(moment(startDate).add(d, 'days').startOf('day').toDate(), moment(startDate).add(d, 'days').endOf('day').toDate());
+          });
+          rect.enter().append('rect').attr('width', cellSize).attr('height', cellSize).attr('x', function(d) {
+            return hour(d) * cellSize;
+          }).attr('y', 0).on("mouseout", function(d) {
+            d3.select(this).classed("active", false);
+            return d3.select('#tooltip').style("opacity", 0);
+          }).on("mousemove", function(d) {
+            return d3.select("#tooltip").style("left", (d3.event.pageX + 14) + "px").style("top", (d3.event.pageY - 32) + "px");
+          });
+          rect.attr('class', function(d) {
+            var count, entry;
+            entry = _.findWhere(data, {
+              dow: weekday(d),
+              hour: "" + (parseInt(hour(d)))
+            });
+            if (entry) {
+              count = entry.count;
+            } else {
+              count = defaultEmpty;
+            }
+            return "hour " + (color(parseInt(count)));
+          }).on("mouseover", function(d) {
+            var count, entry, templateData;
+            entry = _.findWhere(data, {
+              dow: weekday(d),
+              hour: "" + (parseInt(hour(d)))
+            });
+            if (entry) {
+              count = entry.count;
+            } else {
+              count = defaultEmpty;
+            }
+            templateData = {
+              dayOfWeek: weekdayText(d),
+              hour: time(d),
+              dataCount: count
+            };
+            d3.select('#tooltip').html(dayOfWeekTooltip(templateData)).style("opacity", 1);
+            return d3.select(this).classed("active", true);
+          });
+          hoursAxis = d3.svg.axis().scale(timescale).orient('top').ticks(d3.time.hour, xTicks).tickFormat(time);
+          return hoursg = g.append('g').classed('axis', true).classed('hours', true).classed('labeled', true).attr("transform", "translate(0,-10.5)").call(hoursAxis);
+        };
+      })(this));
+    };
+    chart.cellSize = function(value) {
+      if (!arguments.length) {
+        return cellSize;
+      }
+      cellSize = value;
+      return chart;
+    };
+    chart.height = function(value) {
+      if (!arguments.length) {
+        return height;
+      }
+      height = value;
+      return chart;
+    };
+    chart.width = function(value) {
+      if (!arguments.length) {
+        return width;
+      }
+      width = value;
+      return chart;
+    };
+    chart.color = function(value) {
+      if (!arguments.length) {
+        return color;
+      }
+      color = value;
+      return chart;
+    };
+    chart.weekDays = function(value) {
+      if (!arguments.length) {
+        return weekDays;
+      }
+      weekDays = value;
+      return chart;
+    };
+    chart.xTicks = function(value) {
+      if (!arguments.length) {
+        return xTicks;
+      }
+      xTicks = value;
+      return chart;
+    };
+    chart.weekDayPadding = function(value) {
+      if (!arguments.length) {
+        return weekDayPadding;
+      }
+      weekDayPadding = value;
+      return chart;
+    };
+    return chart;
+  };
 
-  height = 20;
-
-  cellSize = 17;
-
-  hour = d3.time.format('%H');
-
-  weekday = d3.time.format('%w');
-
-  weekdayText = d3.time.format('%A');
-
-  time = d3.time.format("%I %p");
-
-  color = d3.scale.quantize().domain([-.05, .05]).range(d3.range(9).map(function(d) {
-    return 'q' + d + '-9';
-  }));
-
-  sunday = new Date(2015, 4, 3);
-
-  start = moment(sunday).startOf('day');
-
-  end = moment(sunday).endOf('day');
-
-  timescale = d3.time.scale().nice(d3.time.day).domain([start.toDate(), end.toDate()]).range([0, cellSize * 24]);
-
-  hoursAxis = d3.svg.axis().scale(timescale).orient('top').ticks(d3.time.hour, 3).tickFormat(time);
-
-  dayOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-
-  dayOfWeekScale = d3.scale.ordinal().domain([0, 1, 2, 3, 4, 5]).range(dayOfWeek);
-
-  dayOfWeekTooltipHtml = d3.select("#day-of-week-popup").html();
-
-  dayOfWeekTooltip = _.template(dayOfWeekTooltipHtml);
-
-  d3.csv('data/day_of_week_hour.csv', function(data) {
-    var hoursg, max, rect, svg;
+  updateData = function(neighborhoods, data) {
+    var max;
+    d3.select("body").classed("modal-open", true);
+    d3.select('.modal').select('h1').text('Loading Data');
     max = d3.max(data, function(d) {
       return d.count;
     });
-    color.domain([0, max]);
-    svg = d3.select('#day-of-week').selectAll('svg').data(d3.range(0, 7)).enter().append('svg').attr('width', width).attr('height', height).append('g').attr('transform', "translate(70,5)").attr('class', 'YlOrRd');
-    svg.append('text').attr('class', 'day-of-week').attr('transform', 'translate(-70,10)').text(function(d) {
-      return dayOfWeek[d];
-    });
-    rect = svg.selectAll('.hour').data(function(d) {
-      return d3.time.hours(moment(sunday).add(d, 'days').startOf('day').toDate(), moment(sunday).add(d, 'days').endOf('day').toDate());
-    }).enter().append('rect').attr('class', 'hour').attr('width', cellSize).attr('height', cellSize).attr('x', function(d) {
-      return hour(d) * cellSize;
-    }).attr('y', 0).attr('class', function(d) {
-      var entry;
-      entry = _.findWhere(data, {
-        dow: weekday(d),
-        hour: "" + (parseInt(hour(d)))
+    _.each(neighborhoods, function(neighborhood) {
+      var chart, color, days, nData, width;
+      nData = _.where(data, {
+        nbrhood: neighborhood.code
       });
-      return color(parseInt(entry.count));
-    }).on("mouseover", function(d) {
-      var entry, templateData;
-      entry = _.findWhere(data, {
-        dow: weekday(d),
-        hour: "" + (parseInt(hour(d)))
-      });
-      templateData = {
-        dayOfWeek: weekdayText(d),
-        hour: time(d),
-        dataCount: entry.count
-      };
-      d3.select('#tooltip').html(dayOfWeekTooltip(templateData)).style("opacity", 1);
-      return d3.select(this).classed("active", true);
-    }).on("mouseout", function(d) {
-      d3.select(this).classed("active", false);
-      return d3.select('#tooltip').style("opacity", 0);
-    }).on("mousemove", function(d) {
-      return d3.select("#tooltip").style("left", (d3.event.pageX + 14) + "px").style("top", (d3.event.pageY - 32) + "px");
+      if (nData) {
+        color = d3.scale.quantize().domain([0, max]).range(d3.range(9).map(function(d) {
+          return 'q' + d + '-9';
+        }));
+        width = d3.select("." + neighborhood.code).node().getBoundingClientRect()['width'];
+        days = ["Su", "Mo", "Tu", "Wed", "Thu", "Fr", "Sa"];
+        chart = dayofWeekChart().color(color).width(265).height(15).cellSize(10).xTicks(5).weekDays(days).weekDayPadding(25);
+        return d3.select("." + neighborhood.code).datum(nData).call(chart);
+      }
     });
-    return hoursg = svg.append('g').classed('axis', true).classed('hours', true).classed('labeled', true).attr("transform", "translate(0,-10.5)").call(hoursAxis);
-  });
+    return d3.select("body").classed("modal-open", false);
+  };
+
+  if (!d3.select('#day-of-week').empty()) {
+    d3.csv('data/day_of_week_hour.csv', function(data) {
+      var chart, color, max, width;
+      max = d3.max(data, function(d) {
+        return d.count;
+      });
+      color = d3.scale.quantize().domain([0, max]).range(d3.range(9).map(function(d) {
+        return 'q' + d + '-9';
+      }));
+      width = d3.select('#day-of-week').node().getBoundingClientRect()['width'];
+      chart = dayofWeekChart().color(color).width(width).cellSize(20);
+      return d3.select('#day-of-week').datum(data).call(chart);
+    });
+  }
+
+  if (!d3.select('#day-of-week-nbhd').empty()) {
+    neighborhoodData = 'data/Neighborhoods.csv';
+    dayOfWeekNbhdData2012 = 'data/day_of_week_hour_nbhd_2012.csv';
+    dayOfWeekNbhdData = 'data/day_of_week_hour_nbhd.csv';
+    queue().defer(d3.csv, neighborhoodData).defer(d3.csv, dayOfWeekNbhdData).defer(d3.csv, dayOfWeekNbhdData2012).await(function(error, neighborhoods, allTimeData, data) {
+      var nbh;
+      nbh = d3.select('#day-of-week-nbhd').selectAll('.nbh').data(neighborhoods);
+      nbh.enter().append('div').attr('class', function(d) {
+        return "nbh " + d.code;
+      }).append('h4').text(function(d) {
+        return d.name;
+      });
+      _.defer(updateData, neighborhoods, data);
+      return d3.selectAll('.year-change').on('click', function(d, i) {
+        var element, year;
+        element = d3.select(this);
+        if (!element.classed('active')) {
+          d3.select("body").classed("modal-open", true);
+          d3.selectAll('.year-change').classed('active', false);
+          element.classed('active', true);
+          year = element.attr('data-year');
+          if (year === 'allTime') {
+            return _.defer(updateData, neighborhoods, allTimeData);
+          } else {
+            return _.defer(updateData, neighborhoods, data);
+          }
+        }
+      });
+    });
+  }
 
 }).call(this);

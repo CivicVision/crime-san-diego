@@ -605,8 +605,59 @@ input[type="submit"] {
     content: "";
     display: table;
     clear: both; }
+  /* line 3, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_dayofweek.sass */
+  .day-of-week h2 {
+    text-align: center;
+    margin: 1.5em; }
+  /* line 6, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_dayofweek.sass */
+  .day-of-week h3 {
+    margin: 0.5em 0; }
+  /* line 8, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_dayofweek.sass */
+  .day-of-week .explanation {
+    display: block; }
+    /* line 15, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/bourbon/addons/_clearfix.scss */
+    .day-of-week .explanation:after {
+      content: "";
+      display: table;
+      clear: both; }
+    /* line 10, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_dayofweek.sass */
+    .day-of-week .explanation p {
+      font-size: 0.9em;
+      line-height: 1.1em;
+      color: #333; }
+  /* line 14, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_dayofweek.sass */
+  .day-of-week .d-o-w-nbh {
+    float: left;
+    display: block;
+    margin-right: 2.35765%;
+    width: 100%;
+    display: block;
+    margin-top: 1em; }
+    /* line 38, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/neat/grid/_span-columns.scss */
+    .day-of-week .d-o-w-nbh:last-child {
+      margin-right: 0; }
+    /* line 15, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/bourbon/addons/_clearfix.scss */
+    .day-of-week .d-o-w-nbh:after {
+      content: "";
+      display: table;
+      clear: both; }
+    /* line 18, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_dayofweek.sass */
+    .day-of-week .d-o-w-nbh .year-switch {
+      display: block; }
+      /* line 15, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/bourbon/addons/_clearfix.scss */
+      .day-of-week .d-o-w-nbh .year-switch:after {
+        content: "";
+        display: table;
+        clear: both; }
+      /* line 20, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_dayofweek.sass */
+      .day-of-week .d-o-w-nbh .year-switch li {
+        float: left;
+        margin: 0.5em; }
+        /* line 24, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_dayofweek.sass */
+        .day-of-week .d-o-w-nbh .year-switch li button.active {
+          background: #777; }
 
-/* line 3, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_dayofweek.sass */
+/* line 26, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_dayofweek.sass */
 #day-of-week {
   float: left;
   display: block;
@@ -615,63 +666,115 @@ input[type="submit"] {
   /* line 38, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/neat/grid/_span-columns.scss */
   #day-of-week:last-child {
     margin-right: 0; }
-  /* line 5, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_dayofweek.sass */
-  #day-of-week g.axis {
-    display: none; }
-  /* line 8, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_dayofweek.sass */
-  #day-of-week svg:first-of-type {
-    height: 50px; }
-    /* line 10, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_dayofweek.sass */
-    #day-of-week svg:first-of-type g.YlOrRd {
-      transform: translate(70px, 35px); }
-    /* line 12, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_dayofweek.sass */
-    #day-of-week svg:first-of-type g.axis {
-      display: block; }
-  /* line 15, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_dayofweek.sass */
-  #day-of-week text {
-    font-size: 0.8em;
-    fill: #333;
-    font-size: 0.7rem; }
-  /* line 19, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_dayofweek.sass */
-  #day-of-week .axis {
-    fill: none; }
-    /* line 21, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_dayofweek.sass */
-    #day-of-week .axis path, #day-of-week .axis line {
-      shape-rendering: crispEdges;
-      stroke: #eee;
-      stroke-width: 1; }
-    /* line 25, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_dayofweek.sass */
-    #day-of-week .axis text {
-      font-size: 0.8em;
-      fill: #ccc;
-      font-size: 0.7rem; }
-  /* line 30, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_dayofweek.sass */
-  #day-of-week .YlOrRd .q0-9 {
-    fill: #ffffcc; }
+  /* line 15, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/bourbon/addons/_clearfix.scss */
+  #day-of-week:after {
+    content: "";
+    display: table;
+    clear: both; }
+
+/* line 29, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_dayofweek.sass */
+#day-of-week-nbhd {
+  display: block;
+  float: left;
+  display: block;
+  margin-right: 2.35765%;
+  width: 100%; }
+  /* line 15, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/bourbon/addons/_clearfix.scss */
+  #day-of-week-nbhd:after {
+    content: "";
+    display: table;
+    clear: both; }
+  /* line 38, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/neat/grid/_span-columns.scss */
+  #day-of-week-nbhd:last-child {
+    margin-right: 0; }
   /* line 32, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_dayofweek.sass */
-  #day-of-week .YlOrRd .q1-9 {
-    fill: #ffeda0; }
-  /* line 34, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_dayofweek.sass */
-  #day-of-week .YlOrRd .q2-9 {
-    fill: #fed976; }
-  /* line 36, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_dayofweek.sass */
-  #day-of-week .YlOrRd .q3-9 {
-    fill: #feb24c; }
-  /* line 38, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_dayofweek.sass */
-  #day-of-week .YlOrRd .q4-9 {
-    fill: #fd8d3c; }
+  #day-of-week-nbhd .nbh {
+    float: left;
+    display: block;
+    margin-right: 2.35765%;
+    width: 31.76157%;
+    margin-top: 1em; }
+    /* line 38, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/neat/grid/_span-columns.scss */
+    #day-of-week-nbhd .nbh:last-child {
+      margin-right: 0; }
+    /* line 52, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/neat/grid/_omega.scss */
+    #day-of-week-nbhd .nbh:nth-child(3n) {
+      margin-right: 0; }
+    /* line 57, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/neat/grid/_omega.scss */
+    #day-of-week-nbhd .nbh:nth-child(3n+1) {
+      clear: left; }
+    /* line 36, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_dayofweek.sass */
+    #day-of-week-nbhd .nbh h4 {
+      font-size: 1.2em;
+      color: #777; }
   /* line 40, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_dayofweek.sass */
-  #day-of-week .YlOrRd .q5-9 {
-    fill: #fc4e2a; }
-  /* line 42, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_dayofweek.sass */
-  #day-of-week .YlOrRd .q6-9 {
-    fill: #e31a1c; }
-  /* line 44, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_dayofweek.sass */
-  #day-of-week .YlOrRd .q7-9 {
-    fill: #bd0026; }
-  /* line 46, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_dayofweek.sass */
-  #day-of-week .YlOrRd .q8-9 {
-    fill: #800026; }
+  #day-of-week-nbhd svg:first-of-type {
+    height: 45px; }
+    /* line 42, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_dayofweek.sass */
+    #day-of-week-nbhd svg:first-of-type g.YlOrRd {
+      transform: translate(25px, 35px); }
+
+/* line 45, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_dayofweek.sass */
+.d-o-w g.axis {
+  display: none; }
+/* line 47, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_dayofweek.sass */
+.d-o-w svg {
+  float: left; }
+  /* line 49, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_dayofweek.sass */
+  .d-o-w svg:first-of-type {
+    height: 50px; }
+    /* line 51, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_dayofweek.sass */
+    .d-o-w svg:first-of-type g.YlOrRd {
+      transform: translate(70px, 35px); }
+    /* line 53, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_dayofweek.sass */
+    .d-o-w svg:first-of-type g.axis {
+      display: block; }
+/* line 56, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_dayofweek.sass */
+.d-o-w text {
+  font-size: 0.8em;
+  fill: #ccc;
+  font-size: 0.7rem;
+  line-height: 0.9em; }
+/* line 61, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_dayofweek.sass */
+.d-o-w .axis {
+  fill: none; }
+  /* line 63, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_dayofweek.sass */
+  .d-o-w .axis path, .d-o-w .axis line {
+    shape-rendering: crispEdges;
+    stroke: #eee;
+    stroke-width: 1; }
+  /* line 67, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_dayofweek.sass */
+  .d-o-w .axis text {
+    font-size: 0.8em;
+    fill: #ccc;
+    font-size: 0.7rem; }
+/* line 72, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_dayofweek.sass */
+.d-o-w .YlOrRd .q0-9 {
+  fill: #ffffcc; }
+/* line 74, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_dayofweek.sass */
+.d-o-w .YlOrRd .q1-9 {
+  fill: #ffeda0; }
+/* line 76, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_dayofweek.sass */
+.d-o-w .YlOrRd .q2-9 {
+  fill: #fed976; }
+/* line 78, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_dayofweek.sass */
+.d-o-w .YlOrRd .q3-9 {
+  fill: #feb24c; }
+/* line 80, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_dayofweek.sass */
+.d-o-w .YlOrRd .q4-9 {
+  fill: #fd8d3c; }
+/* line 82, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_dayofweek.sass */
+.d-o-w .YlOrRd .q5-9 {
+  fill: #fc4e2a; }
+/* line 84, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_dayofweek.sass */
+.d-o-w .YlOrRd .q6-9 {
+  fill: #e31a1c; }
+/* line 86, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_dayofweek.sass */
+.d-o-w .YlOrRd .q7-9 {
+  fill: #bd0026; }
+/* line 88, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_dayofweek.sass */
+.d-o-w .YlOrRd .q8-9 {
+  fill: #800026; }
 
 /* line 3, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_barcharts.sass */
 .graph .axis text {
@@ -695,6 +798,156 @@ input[type="submit"] {
 /* line 3, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_table.sass */
 .types-per-district table thead th:first-child {
   width: 70px; }
+
+/* line 19, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_modal.sass */
+.modal label {
+  cursor: pointer;
+  margin-bottom: 0; }
+/* line 22, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_modal.sass */
+.modal label img {
+  border-radius: 150px;
+  display: block;
+  max-width: 300px; }
+/* line 26, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_modal.sass */
+.modal .modal-state {
+  display: none; }
+/* line 28, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_modal.sass */
+.modal .modal-trigger {
+  padding: 0.8em 1em; }
+/* line 30, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_modal.sass */
+.modal .modal-fade-screen {
+  -webkit-transition: opacity 0.25s ease;
+  -moz-transition: opacity 0.25s ease;
+  transition: opacity 0.25s ease;
+  position: fixed;
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
+  left: 0px;
+  background: rgba(0, 0, 0, 0.85);
+  opacity: 0;
+  padding-top: 0.6em;
+  text-align: left;
+  visibility: hidden;
+  z-index: 99999999999; }
+  @media screen and (min-width: 53.75em) {
+    /* line 30, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_modal.sass */
+    .modal .modal-fade-screen {
+      padding-top: 10em; } }
+  /* line 43, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_modal.sass */
+  .modal .modal-fade-screen .modal-bg {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+    cursor: pointer; }
+/* line 46, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_modal.sass */
+.modal .modal-close {
+  position: absolute;
+  top: 1.5em;
+  right: 1.5em;
+  bottom: 1.5em;
+  left: 1.5em;
+  height: 1.5em;
+  width: 1.5em;
+  background: white;
+  cursor: pointer; }
+  /* line 51, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_modal.sass */
+  .modal .modal-close:after, .modal .modal-close:before {
+    position: absolute;
+    top: 3px;
+    right: 3px;
+    bottom: 0;
+    left: 50%;
+    -webkit-transform: rotate(45deg);
+    -moz-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    -o-transform: rotate(45deg);
+    transform: rotate(45deg);
+    height: 1.5em;
+    width: 0.15em;
+    background: #DDD;
+    content: "";
+    display: block;
+    margin: -3px 0 0 -1px; }
+  /* line 60, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_modal.sass */
+  .modal .modal-close:hover:after, .modal .modal-close:hover:before {
+    background: #c4c4c4; }
+  /* line 63, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_modal.sass */
+  .modal .modal-close:before {
+    -webkit-transform: rotate(-45deg);
+    -moz-transform: rotate(-45deg);
+    -ms-transform: rotate(-45deg);
+    -o-transform: rotate(-45deg);
+    transform: rotate(-45deg); }
+/* line 65, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_modal.sass */
+.modal .modal-inner {
+  -webkit-transition: opacity 0.25s ease;
+  -moz-transition: opacity 0.25s ease;
+  transition: opacity 0.25s ease;
+  background: white;
+  border-radius: 0.1875em;
+  margin-top: 0;
+  margin: auto;
+  max-height: 95%;
+  overflow: auto;
+  padding: 1.5em;
+  position: relative;
+  width: 95%; }
+  @media screen and (min-width: 40em) {
+    /* line 65, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_modal.sass */
+    .modal .modal-inner {
+      max-height: 70%;
+      padding: 3em;
+      width: 60%; } }
+  @media screen and (min-width: 53.75em) {
+    /* line 65, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_modal.sass */
+    .modal .modal-inner {
+      width: 50%; } }
+  /* line 84, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_modal.sass */
+  .modal .modal-inner h1 {
+    color: #333;
+    margin-bottom: 0 0 0.6em 0;
+    text-align: center;
+    text-transform: capitalize; }
+  /* line 89, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_modal.sass */
+  .modal .modal-inner p {
+    color: #333;
+    line-height: 1.5em; }
+  /* line 92, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_modal.sass */
+  .modal .modal-inner .modal-intro {
+    font-weight: 800; }
+  /* line 94, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_modal.sass */
+  .modal .modal-inner .modal-content {
+    color: #333; }
+    @media screen and (min-width: 40em) {
+      /* line 94, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_modal.sass */
+      .modal .modal-inner .modal-content {
+        -webkit-columns: 2 8em;
+        -moz-columns: 2 8em;
+        columns: 2 8em; } }
+  /* line 98, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_modal.sass */
+  .modal .modal-inner a.cta {
+    color: white;
+    display: inline-block;
+    margin-right: 0.5em;
+    margin-top: 1em; }
+    /* line 103, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_modal.sass */
+    .modal .modal-inner a.cta:last-child {
+      padding: 0 2em; }
+
+/* line 106, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_modal.sass */
+.modal-open .modal-fade-screen {
+  opacity: 1;
+  visibility: visible; }
+/* line 109, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_modal.sass */
+.modal-open .modal-fade-screen .modal-inner {
+  top: 0.5em; }
+
+/* line 112, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/components/_modal.sass */
+.modal-open {
+  overflow: hidden; }
 
 /* line 1, /Development/work/civicvision/viz/crime/sandiego/site/source/stylesheets/pages/_main.sass */
 .page {
