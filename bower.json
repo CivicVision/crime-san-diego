@@ -16,6 +16,7 @@
   "dependencies": {
     "underscore":"",
     "d3":"",
-    "moment":""
+    "moment":"",
+    "queue-async":""
   }
 }
