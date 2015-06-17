@@ -1,5 +1,7 @@
 .day-of-week
-  #day-of-week
+  %h2 Crimes Day of Week by Hour of Day
+  #day-of-week.d-o-w
+  = partial "partials/day-of-week-nbh.html"
   %script(id="day-of-week-popup" type="text/x-handlebars-template")
     <div class='date'>
     <h4><%= dayOfWeek %>, <%= hour %></h4>

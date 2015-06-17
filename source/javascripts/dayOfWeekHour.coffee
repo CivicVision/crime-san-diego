@@ -122,6 +122,21 @@
     chart
   chart
 
+updateData = (neighborhoods, data) ->
+  d3.select("body").classed("modal-open", true)
+  d3.select('.modal').select('h1').text('Loading Data')
+  max = d3.max(data, (d) -> d.count)
+  _.each neighborhoods, (neighborhood) ->
+    nData = _.where(data, { nbrhood: neighborhood.code })
+    if nData
+      color = d3.scale.quantize().domain([0, max]).range(d3.range(9).map((d) -> 'q' + d + '-9'))
+      width = d3.select(".#{neighborhood.code}").node().getBoundingClientRect()['width']
+      days = ["Su","Mo","Tu","Wed", "Thu", "Fr", "Sa"]
+      chart = dayofWeekChart().color(color).width(265).height(15).cellSize(10).xTicks(5).weekDays(days).weekDayPadding(25)
+      d3.select(".#{neighborhood.code}").datum(nData).call(chart)
+
+  d3.select("body").classed("modal-open", false)
+
 unless d3.select('#day-of-week').empty()
 
   d3.csv 'data/day_of_week_hour.csv', (data) ->
@@ -131,3 +146,31 @@ unless d3.select('#day-of-week').empty()
     chart = dayofWeekChart().color(color).width(width).cellSize(20)
     d3.select('#day-of-week').datum(data).call(chart)
 
+unless d3.select('#day-of-week-nbhd').empty()
+  neighborhoodData = 'data/Neighborhoods.csv'
+  dayOfWeekNbhdData2012 = 'data/day_of_week_hour_nbhd_2012.csv'
+  dayOfWeekNbhdData = 'data/day_of_week_hour_nbhd.csv'
+
+  queue()
+    .defer(d3.csv, neighborhoodData)
+    .defer(d3.csv, dayOfWeekNbhdData)
+    .defer(d3.csv, dayOfWeekNbhdData2012)
+    .await (error, neighborhoods, allTimeData, data) ->
+      nbh = d3.select('#day-of-week-nbhd').selectAll('.nbh').data(neighborhoods)
+      nbh
+        .enter()
+        .append('div').attr('class', (d) -> "nbh #{d.code}")
+        .append('h2').text( (d) -> d.name)
+      _.defer(updateData, neighborhoods, data)
+      d3.selectAll('.year-change').on('click', (d,i) ->
+        element = d3.select(this)
+        unless element.classed('active')
+          d3.select("body").classed("modal-open", true)
+          d3.selectAll('.year-change').classed('active', false)
+          element.classed('active', true)
+          year = element.attr('data-year')
+          if year == 'allTime'
+            _.defer(updateData, neighborhoods, allTimeData)
+          else
+            _.defer(updateData, neighborhoods, data)
+      )

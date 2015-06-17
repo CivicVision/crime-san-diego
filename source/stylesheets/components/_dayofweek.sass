@@ -1,10 +1,35 @@
 .day-of-week
   @include outer-container()
+  .d-o-w-nbh
+    margin-top: 1em
+    .year-switch
+      li
+        float: left
+        margin: 0.5em
+        button
+          &.active
+            background: #777
 #day-of-week
   @include span-columns(12)
+#day-of-week-nbhd
+  @include span-columns(12)
+  .nbh
+    @include span-columns(4)
+    @include omega(3n)
+    margin-top: 1em
+    h2
+      font-size: 1.2em
+      color: #777
+  svg
+    &:first-of-type
+      height: 45px
+      g.YlOrRd
+        transform: translate(25px, 35px)
+.d-o-w
   g.axis
     display: none
   svg
+    float: left
     &:first-of-type
       height: 50px
       g.YlOrRd
@@ -14,8 +39,9 @@
 
   text
     font-size: 0.8em
-    fill: #333
+    fill: #ccc
     font-size: 0.7rem
+    line-height: 0.9em
   .axis
     fill: none
     path, line
