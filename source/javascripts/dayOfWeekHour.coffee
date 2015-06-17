@@ -1,60 +1,123 @@
-width = 960
-height = 20
-cellSize = 17
-hour = d3.time.format('%H')
-weekday = d3.time.format('%w')
-weekdayText = d3.time.format('%A')
-time = d3.time.format("%I %p")
-color = d3.scale.quantize().domain([ -.05, .05 ]).range(d3.range(9).map((d) -> 'q' + d + '-9'))
-sunday = new Date(2015,4,3)
-start = moment(sunday).startOf('day')
-end = moment(sunday).endOf('day')
-timescale = d3.time.scale()
-.nice(d3.time.day)
-.domain([start.toDate(), end.toDate()])
-.range([0, cellSize*24])
+@dayofWeekChart = ->
+  width = 700
+  height = 20
+  cellSize = 17
+  xTicks = 3
+  defaultEmpty = 0
+  weekDays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+  hour = d3.time.format('%H')
+  weekday = d3.time.format('%w')
+  weekdayText = d3.time.format('%A')
+  time = d3.time.format("%I %p")
 
-hoursAxis = d3.svg.axis()
-.scale(timescale)
-.orient('top')
-.ticks(d3.time.hour, 3)
-.tickFormat(time)
+  dayOfWeekTooltipHtml = d3.select("#day-of-week-popup").html()
+  dayOfWeekTooltip = _.template(dayOfWeekTooltipHtml)
 
-dayOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
-dayOfWeekScale = d3.scale.ordinal().domain([0...6]).range(dayOfWeek)
+  dayOfWeekScale = d3.scale.ordinal().domain([0...6]).range(weekDays)
+  startDate = new Date(2015,4,3)
+  color = d3.scale.quantize().domain([ -.05, .05 ]).range(d3.range(9).map((d) -> 'q' + d + '-9'))
+  start = moment(startDate).startOf('day')
+  end = moment(startDate).endOf('day')
 
-dayOfWeekTooltipHtml = d3.select("#day-of-week-popup").html()
-dayOfWeekTooltip = _.template(dayOfWeekTooltipHtml)
+  timescale = d3.time.scale()
+  .nice(d3.time.day)
+  .domain([start.toDate(), end.toDate()])
+  .range([0, cellSize*24])
 
-d3.csv 'data/day_of_week_hour.csv', (data) ->
-  max = d3.max(data, (d) -> d.count)
-  color.domain([0, max])
-  svg = d3.select('#day-of-week').selectAll('svg').data(d3.range(0,7)).enter().append('svg').attr('width', width).attr('height', height).append('g').attr('transform', "translate(70,5)").attr('class', 'YlOrRd')
 
-  svg.append('text').attr('class', 'day-of-week').attr('transform', 'translate(-70,10)').text( (d) -> dayOfWeek[d] )
-  rect = svg.selectAll('.hour').data((d) -> 
-    d3.time.hours moment(sunday).add(d, 'days').startOf('day').toDate(), moment(sunday).add(d, 'days').endOf('day').toDate()
-  ).enter().append('rect').attr('class', 'hour').attr('width', cellSize).attr('height', cellSize).attr('x', (d) ->
-   hour(d)*cellSize 
-  ).attr('y', 0)
-  .attr('class', (d) ->
-    entry = _.findWhere(data, { dow: weekday(d), hour: "#{parseInt(hour(d))}"})
-    color(parseInt(entry.count))
-  ).on("mouseover", (d) ->
-    entry = _.findWhere(data, { dow: weekday(d), hour: "#{parseInt(hour(d))}"})
-    templateData  = { dayOfWeek: weekdayText(d), hour: time(d), dataCount: entry.count}
-    d3.select('#tooltip').html(dayOfWeekTooltip(templateData)).style("opacity", 1)
-    d3.select(this).classed("active", true)
-  ).on("mouseout", (d) ->
-    d3.select(this).classed("active", false)
-    d3.select('#tooltip').style("opacity", 0)
-  ).on("mousemove", (d) ->
-    d3.select("#tooltip").style("left", (d3.event.pageX + 14) + "px")
-    .style("top", (d3.event.pageY - 32) + "px")
-  )
-  hoursg = svg.append('g')
-  .classed('axis', true)
-  .classed('hours', true)
-  .classed('labeled', true)
-  .attr("transform", "translate(0,-10.5)")
-  .call(hoursAxis)
+  chart = (selection) ->
+    selection.each (data,i) =>
+      start = moment(startDate).startOf('day')
+      end = moment(startDate).endOf('day')
+
+      timescale
+        .domain([start.toDate(), end.toDate()])
+        .range([0, cellSize*24])
+      svg = this.selectAll('svg').data(d3.range(0,7))
+
+      gEnter = svg.enter().append('svg').append('g')
+
+      svg.attr('width', width).attr('height', height)
+      g = svg.select("g").attr('transform', "translate(70,5)").attr('class', 'YlOrRd')
+      g.append('text').attr('class', 'day-of-week').attr('transform', 'translate(-70,10)').text( (d) -> weekDays[d] )
+      rect = g.selectAll('.hour').data((d) ->
+        d3.time.hours moment(startDate).add(d, 'days').startOf('day').toDate(), moment(startDate).add(d, 'days').endOf('day').toDate()
+      ).enter().append('rect').attr('class', 'hour').attr('width', cellSize).attr('height', cellSize).attr('x', (d) ->
+        hour(d)*cellSize
+      ).attr('y', 0)
+      .attr('class', (d) ->
+        entry = _.findWhere(data, { dow: weekday(d), hour: "#{parseInt(hour(d))}"})
+        if entry
+          count = entry.count
+        else
+          count = defaultEmpty
+        color(parseInt(count))
+      ).on("mouseover", (d) ->
+        entry = _.findWhere(data, { dow: weekday(d), hour: "#{parseInt(hour(d))}"})
+        if entry
+          count = entry.count
+        else
+          count = defaultEmpty
+        templateData  = { dayOfWeek: weekdayText(d), hour: time(d), dataCount: count }
+        d3.select('#tooltip').html(dayOfWeekTooltip(templateData)).style("opacity", 1)
+        d3.select(this).classed("active", true)
+      ).on("mouseout", (d) ->
+        d3.select(this).classed("active", false)
+        d3.select('#tooltip').style("opacity", 0)
+      ).on("mousemove", (d) ->
+        d3.select("#tooltip").style("left", (d3.event.pageX + 14) + "px")
+        .style("top", (d3.event.pageY - 32) + "px")
+      )
+      hoursAxis = d3.svg.axis()
+      .scale(timescale)
+      .orient('top')
+      .ticks(d3.time.hour, xTicks)
+      .tickFormat(time)
+
+      hoursg = g.append('g')
+      .classed('axis', true)
+      .classed('hours', true)
+      .classed('labeled', true)
+      .attr("transform", "translate(0,-10.5)")
+      .call(hoursAxis)
+  chart.cellSize = (value) ->
+    unless arguments.length
+      return cellSize
+    cellSize = value
+    chart
+  chart.height = (value) ->
+    unless arguments.length
+      return height
+    height = value
+    chart
+  chart.width = (value) ->
+    unless arguments.length
+      return width
+    width = value
+    chart
+  chart.color = (value) ->
+    unless arguments.length
+      return color
+    color = value
+    chart
+  chart.weekDays = (value) ->
+    unless arguments.length
+      return weekDays
+    weekDays = value
+    chart
+  chart.xTicks = (value) ->
+    unless arguments.length
+      return xTicks
+    xTicks = value
+    chart
+  chart
+
+unless d3.select('#day-of-week').empty()
+
+  d3.csv 'data/day_of_week_hour.csv', (data) ->
+    max = d3.max(data, (d) -> d.count)
+    color = d3.scale.quantize().domain([0, max]).range(d3.range(9).map((d) -> 'q' + d + '-9'))
+    width = d3.select('#day-of-week').node().getBoundingClientRect()['width']
+    chart = dayofWeekChart().color(color).width(width).cellSize(20)
+    d3.select('#day-of-week').datum(data).call(chart)
+
