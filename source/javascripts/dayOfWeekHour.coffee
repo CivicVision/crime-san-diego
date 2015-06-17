@@ -44,17 +44,26 @@
       g.append('text').attr('class', 'day-of-week').attr('transform', "translate(-#{weekDayPadding}, #{paddingDays*2})").text( (d) -> weekDays[d] )
       rect = g.selectAll('.hour').data((d) ->
         d3.time.hours moment(startDate).add(d, 'days').startOf('day').toDate(), moment(startDate).add(d, 'days').endOf('day').toDate()
-      ).enter().append('rect').attr('class', 'hour').attr('width', cellSize).attr('height', cellSize).attr('x', (d) ->
+      )
+      rect.enter().append('rect').attr('width', cellSize).attr('height', cellSize).attr('x', (d) ->
         hour(d)*cellSize
       ).attr('y', 0)
-      .attr('class', (d) ->
+      .on("mouseout", (d) ->
+        d3.select(this).classed("active", false)
+        d3.select('#tooltip').style("opacity", 0)
+      ).on("mousemove", (d) ->
+        d3.select("#tooltip").style("left", (d3.event.pageX + 14) + "px")
+        .style("top", (d3.event.pageY - 32) + "px")
+      )
+      rect.attr('class', (d) ->
         entry = _.findWhere(data, { dow: weekday(d), hour: "#{parseInt(hour(d))}"})
         if entry
           count = entry.count
         else
           count = defaultEmpty
-        color(parseInt(count))
-      ).on("mouseover", (d) ->
+        "hour #{color(parseInt(count))}"
+      )
+      .on("mouseover", (d) ->
         entry = _.findWhere(data, { dow: weekday(d), hour: "#{parseInt(hour(d))}"})
         if entry
           count = entry.count
@@ -63,12 +72,6 @@
         templateData  = { dayOfWeek: weekdayText(d), hour: time(d), dataCount: count }
         d3.select('#tooltip').html(dayOfWeekTooltip(templateData)).style("opacity", 1)
         d3.select(this).classed("active", true)
-      ).on("mouseout", (d) ->
-        d3.select(this).classed("active", false)
-        d3.select('#tooltip').style("opacity", 0)
-      ).on("mousemove", (d) ->
-        d3.select("#tooltip").style("left", (d3.event.pageX + 14) + "px")
-        .style("top", (d3.event.pageY - 32) + "px")
       )
       hoursAxis = d3.svg.axis()
       .scale(timescale)
