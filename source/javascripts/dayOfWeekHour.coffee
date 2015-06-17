@@ -4,6 +4,8 @@
   cellSize = 17
   xTicks = 3
   defaultEmpty = 0
+  paddingDays = 5
+  weekDayPadding = 70
   weekDays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
   hour = d3.time.format('%H')
   weekday = d3.time.format('%w')
@@ -38,8 +40,8 @@
       gEnter = svg.enter().append('svg').append('g')
 
       svg.attr('width', width).attr('height', height)
-      g = svg.select("g").attr('transform', "translate(70,5)").attr('class', 'YlOrRd')
-      g.append('text').attr('class', 'day-of-week').attr('transform', 'translate(-70,10)').text( (d) -> weekDays[d] )
+      g = svg.select("g").attr('transform', "translate(#{weekDayPadding}, #{paddingDays})").attr('class', 'YlOrRd')
+      g.append('text').attr('class', 'day-of-week').attr('transform', "translate(-#{weekDayPadding}, #{paddingDays*2})").text( (d) -> weekDays[d] )
       rect = g.selectAll('.hour').data((d) ->
         d3.time.hours moment(startDate).add(d, 'days').startOf('day').toDate(), moment(startDate).add(d, 'days').endOf('day').toDate()
       ).enter().append('rect').attr('class', 'hour').attr('width', cellSize).attr('height', cellSize).attr('x', (d) ->
@@ -109,6 +111,11 @@
     unless arguments.length
       return xTicks
     xTicks = value
+    chart
+  chart.weekDayPadding = (value) ->
+    unless arguments.length
+      return weekDayPadding
+    weekDayPadding = value
     chart
   chart
 
