@@ -1,9 +1,12 @@
 .d-o-w-nbh
-  %h2 By Neighborhood
+  %h3 Crimes by Neighborhood
   %ul.year-switch
     %li
       %button.active.year-change(data-year="2012") 2012
     %li
       %button.year-change(data-year="allTime") All-time
+  .explanation
+    %p Select which timeframe you want to see. Hover over a specific dataset to see the acutal number.
+    %p All Visualizations use the same scale. Days/Hours with more crimes appear darker (red) and with less/no crime lighter (yellow).
   #day-of-week-nbhd.d-o-w
 = partial "partials/modal"

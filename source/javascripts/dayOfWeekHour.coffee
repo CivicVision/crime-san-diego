@@ -160,7 +160,7 @@ unless d3.select('#day-of-week-nbhd').empty()
       nbh
         .enter()
         .append('div').attr('class', (d) -> "nbh #{d.code}")
-        .append('h2').text( (d) -> d.name)
+        .append('h4').text( (d) -> d.name)
       _.defer(updateData, neighborhoods, data)
       d3.selectAll('.year-change').on('click', (d,i) ->
         element = d3.select(this)
