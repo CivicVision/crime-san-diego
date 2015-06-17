@@ -2,17 +2,5 @@
 title: Welcome to Middleman
 ---
 .page
-  = partial "partials/overall.html"
-  = partial "partials/districts_overview.html"
-  = partial "partials/districts_types.html"
   = partial "partials/day-of-week.html"
-  .calendar
-    #calendar
-    %script(id="calendar-popup" type="text/x-handlebars-template")
-      <div class='date'>
-      <h4><%= date%></h4>
-      </div>
-      <div class='count'>
-      <h5><%= dataCount %></h5>
-      </div>
 #tooltip
